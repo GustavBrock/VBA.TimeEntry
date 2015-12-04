@@ -99,8 +99,6 @@ End Sub
 
 Private Sub Logon_KeyPress(KeyAscii As Integer)
   
-    Const AsciiZero As Integer = 48
-    
     Dim Text        As String
     Dim Char        As String
     Dim Length      As Integer
@@ -108,22 +106,22 @@ Private Sub Logon_KeyPress(KeyAscii As Integer)
     
     With Me!Logon
         Select Case KeyAscii
-            Case 8, 9, 10, 13, 27, 127
+            Case vbKeyBack, vbKeyTab, Asc(vbLf), vbKeyReturn, vbKeyEscape, vbKeyF16
                 ' Allow navigation etc. with
-                ' Tab, (Ctrl+)BackSpace, (Ctrl+)Enter, and Escape.
+                ' BackSpace, Tab, Ctrl+Enter, Enter, Escape, Ctrl+BackSpace
             Case Is > 0
-                If Not IsNumeric(Chr(KeyAscii)) Then
-                    ' Replace any invalid entry with a zero.
-                    KeyAscii = AsciiZero
-                End If
-            
                 Text = .Text
                 Length = Len(Text)
                 SelStart = .SelStart
-            
+                
+                If KeyAscii < vbKey0 Or KeyAscii > vbKey9 Then
+                    ' Replace any invalid entry with a zero.
+                    KeyAscii = vbKey0
+                End If
+                
                 Char = Mid(Text, 1 + SelStart, 1)
                 If SelStart < Length Then
-                    If KeyAscii <= AsciiZero + 2 Then
+                    If KeyAscii <= vbKey0 + 2 Then
                         ' Always accept 0, 1, 2.
                     Else
                         ' Check if the text will represent a valid time.
